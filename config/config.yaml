@@ -1,0 +1,547 @@
+# config/config.yaml
+
+# Project Configuration
+project:
+  name: "intelligent-document-classification"
+  version: "1.0.0"
+  description: "Deep learning based document classification system"
+  authors: ["Your Name"]
+  license: "MIT"
+
+# Data Configuration
+data:
+  raw_path: "data/raw"
+  processed_path: "data/processed"
+  external_path: "data/external"
+  
+  # Dataset paths (update with your actual dataset paths)
+  datasets:
+    train: "data/raw/train.csv"
+    validation: "data/raw/val.csv"
+    test: "data/raw/test.csv"
+    
+  # Document formats supported
+  supported_formats: [".txt", ".pdf", ".docx", ".doc"]
+  
+  # Data splitting
+  split_ratio:
+    train: 0.7
+    validation: 0.15
+    test: 0.15
+    
+  # Class distribution (for imbalanced data handling)
+  class_balancing: "undersample"  # Options: oversample, undersample, smote, none
+
+# Text Preprocessing Configuration
+preprocessing:
+  # Text cleaning
+  remove_special_chars: true
+  remove_digits: false
+  convert_to_lowercase: true
+  remove_extra_spaces: true
+  
+  # Tokenization
+  tokenizer: "spacy"  # Options: spacy, nltk, bert
+  spacy_model: "en_core_web_sm"
+  
+  # Stopwords
+  remove_stopwords: true
+  custom_stopwords: []  # Add custom stopwords here
+  
+  # Stemming/Lemmatization
+  lemmatize: true
+  stem: false
+  stemmer: "porter"  # Options: porter, snowball, lancaster
+  
+  # Special processing
+  remove_email: true
+  remove_url: true
+  remove_html: true
+  expand_contractions: true
+  
+  # Text length management
+  min_token_length: 2
+  max_token_length: 100
+  max_document_length: 1000  # For truncation
+
+# Feature Extraction Configuration
+features:
+  # Feature extraction methods
+  methods:
+    - "tfidf"
+    - "word2vec"
+    - "bert"
+    - "fasttext"
+  
+  # TF-IDF settings
+  tfidf:
+    max_features: 5000
+    ngram_range: [1, 2]
+    min_df: 2
+    max_df: 0.9
+    use_idf: true
+    smooth_idf: true
+    sublinear_tf: true
+    
+  # Word2Vec settings
+  word2vec:
+    vector_size: 300
+    window: 5
+    min_count: 2
+    workers: 4
+    sg: 1  # 1 for skip-gram, 0 for CBOW
+    negative: 5
+    epochs: 10
+    
+  # BERT settings
+  bert:
+    model_name: "bert-base-uncased"
+    max_length: 512
+    batch_size: 16
+    pooling: "cls"  # Options: cls, mean, max
+    
+  # FastText settings
+  fasttext:
+    model_name: "crawl-300d-2M-subword"
+    pretrained: true
+    
+  # General feature settings
+  feature_selection:
+    method: "chi2"  # Options: chi2, mutual_info, variance, none
+    k_best: 1000
+
+# Model Configuration
+models:
+  # Available models
+  available:
+    classical:
+      - "random_forest"
+      - "svm"
+      - "logistic_regression"
+      - "naive_bayes"
+      - "xgboost"
+    deep_learning:
+      - "bert"
+      - "cnn"
+      - "lstm"
+      - "bilstm"
+      - "cnn_lstm"
+    transformer:
+      - "bert"
+      - "roberta"
+      - "distilbert"
+      - "albert"
+      - "electra"
+      
+  # Default model for training
+  default_model: "bert"
+  
+  # Model save paths
+  save_path: "models/saved_models"
+  best_model_path: "models/best_model"
+  checkpoints_path: "models/checkpoints"
+  
+  # Model-specific configurations
+  classical_ml:
+    random_forest:
+      n_estimators: 100
+      max_depth: null
+      min_samples_split: 2
+      min_samples_leaf: 1
+      n_jobs: -1
+      
+    svm:
+      C: 1.0
+      kernel: "rbf"
+      gamma: "scale"
+      probability: true
+      
+    xgboost:
+      n_estimators: 100
+      max_depth: 6
+      learning_rate: 0.1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      
+  deep_learning:
+    cnn:
+      embedding_dim: 300
+      num_filters: 100
+      filter_sizes: [3, 4, 5]
+      dropout: 0.5
+      hidden_dims: [256, 128]
+      activation: "relu"
+      
+    lstm:
+      embedding_dim: 300
+      hidden_dim: 256
+      num_layers: 2
+      dropout: 0.3
+      bidirectional: true
+      
+    cnn_lstm:
+      embedding_dim: 300
+      num_filters: 100
+      filter_sizes: [3, 4, 5]
+      lstm_units: 128
+      dropout: 0.5
+      
+  transformer:
+    bert:
+      model_name: "bert-base-uncased"
+      num_labels: null  # Will be set based on data
+      hidden_dropout_prob: 0.1
+      attention_probs_dropout_prob: 0.1
+      classifier_dropout: null
+      
+    roberta:
+      model_name: "roberta-base"
+      
+    distilbert:
+      model_name: "distilbert-base-uncased"
+
+# Training Configuration
+training:
+  # General training settings
+  random_seed: 42
+  device: "cuda"  # Options: cuda, cpu, auto
+  num_epochs: 10
+  early_stopping_patience: 5
+  gradient_accumulation_steps: 1
+  
+  # Batch sizes
+  batch_size:
+    train: 32
+    validation: 32
+    test: 32
+    
+  # Learning rate
+  learning_rate: 2e-5
+  scheduler: "linear_warmup"  # Options: linear_warmup, cosine, reduce_on_plateau
+  
+  # Optimizer
+  optimizer: "adamw"
+  weight_decay: 0.01
+  adam_epsilon: 1e-8
+  
+  # Loss function
+  loss_function: "cross_entropy"  # Options: cross_entropy, focal_loss, label_smoothing
+  
+  # Label smoothing (if used)
+  label_smoothing: 0.1
+  
+  # Focal loss parameters (if used)
+  focal_loss:
+    alpha: 0.25
+    gamma: 2.0
+    
+  # Mixed precision training
+  fp16: false
+  fp16_opt_level: "O1"
+  
+  # Gradient clipping
+  max_grad_norm: 1.0
+  
+  # Checkpoint settings
+  save_strategy: "epoch"  # Options: epoch, steps
+  save_steps: 500
+  save_total_limit: 3
+  
+  # Evaluation during training
+  evaluation_strategy: "epoch"  # Options: epoch, steps
+  eval_steps: 500
+  logging_steps: 100
+
+# Hyperparameter Optimization
+hyperparameter_tuning:
+  enable: true
+  framework: "optuna"  # Options: optuna, ray_tune, hyperopt
+  n_trials: 50
+  timeout_hours: 24
+  direction: "maximize"  # maximize accuracy
+  
+  # Search spaces
+  search_space:
+    learning_rate:
+      type: "log_uniform"
+      low: 1e-5
+      high: 1e-3
+      
+    batch_size:
+      type: "categorical"
+      values: [16, 32, 64]
+      
+    num_epochs:
+      type: "int"
+      low: 3
+      high: 20
+      
+    weight_decay:
+      type: "uniform"
+      low: 0.0
+      high: 0.1
+      
+    dropout:
+      type: "uniform"
+      low: 0.1
+      high: 0.5
+
+# Evaluation Configuration
+evaluation:
+  # Metrics to compute
+  metrics:
+    - "accuracy"
+    - "precision_macro"
+    - "recall_macro"
+    - "f1_macro"
+    - "precision_weighted"
+    - "recall_weighted"
+    - "f1_weighted"
+    - "confusion_matrix"
+    - "classification_report"
+    
+  # Threshold for binary/multilabel classification
+  threshold: 0.5
+  
+  # Confidence threshold for predictions
+  confidence_threshold: 0.7
+  
+  # Evaluation datasets
+  test_datasets:
+    - "test"
+    - "validation"
+    - "ood"  # out-of-distribution
+    
+  # Error analysis
+  error_analysis:
+    enable: true
+    save_misclassified: true
+    misclassified_path: "reports/misclassified_samples"
+    
+  # Cross-validation
+  cross_validation:
+    enable: false
+    n_folds: 5
+    stratified: true
+
+# Logging and Monitoring
+logging:
+  # MLflow tracking
+  mlflow:
+    enable: true
+    tracking_uri: "mlruns"
+    experiment_name: "document-classification"
+    log_artifacts: true
+    log_model: true
+    
+  # TensorBoard
+  tensorboard:
+    enable: true
+    log_dir: "runs"
+    
+  # Weights & Biases
+  wandb:
+    enable: false
+    project: "document-classification"
+    entity: null
+    
+  # Console logging
+  console:
+    log_level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    
+  # File logging
+  file:
+    enable: true
+    log_path: "logs"
+    max_file_size: 10485760  # 10MB
+    backup_count: 5
+
+# Deployment Configuration
+deployment:
+  # API Server
+  api:
+    host: "0.0.0.0"
+    port: 8000
+    workers: 4
+    reload: true
+    
+  # Streamlit App
+  streamlit:
+    port: 8501
+    theme: "light"
+    
+  # Docker
+  docker:
+    base_image: "python:3.9-slim"
+    expose_port: 8501
+    memory_limit: "4G"
+    
+  # Model serving
+  model_serving:
+    framework: "fastapi"  # Options: fastapi, flask, torchserve
+    max_batch_size: 32
+    timeout: 30
+    
+  # Caching
+  caching:
+    enable: true
+    type: "redis"  # Options: redis, memory
+    ttl: 3600  # Time to live in seconds
+    
+  # Rate limiting
+  rate_limiting:
+    enable: true
+    requests_per_minute: 60
+    
+  # Health checks
+  health_check:
+    endpoint: "/health"
+    interval: 30
+
+# System Configuration
+system:
+  # Resource management
+  resources:
+    max_workers: 4
+    memory_fraction: 0.8
+    gpu_memory_fraction: 0.9
+    
+  # Parallel processing
+  parallel:
+    preprocessing: true
+    feature_extraction: true
+    prediction: true
+    
+  # Caching
+  cache_dir: ".cache"
+  clear_cache_on_start: false
+  
+  # Paths
+  temp_dir: "temp"
+  models_dir: "models"
+  reports_dir: "reports"
+  results_dir: "results"
+  
+# Performance Optimization
+performance:
+  # Inference optimization
+  inference:
+    use_onnx: false
+    quantize: false
+    pruning: false
+    graph_optimization: true
+    
+  # Batch processing
+  batch_processing:
+    max_batch_size: 100
+    timeout_seconds: 300
+    
+  # Memory optimization
+  memory:
+    stream_large_files: true
+    chunk_size: 1024  # in KB
+    
+  # GPU optimization
+  gpu:
+    mixed_precision: true
+    cudnn_benchmark: true
+
+# Application Configuration
+app:
+  # User interface
+  ui:
+    title: "Intelligent Document Classification System"
+    theme_color: "#4F46E5"
+    max_file_size: 100  # in MB
+    supported_languages: ["en", "es", "fr", "de"]
+    
+  # File upload
+  upload:
+    allowed_extensions: [".txt", ".pdf", ".docx", ".doc", ".rtf"]
+    max_files: 100
+    chunk_size: 8192
+    
+  # Results display
+  results:
+    show_confidence: true
+    show_processed_text: true
+    show_top_n_predictions: 3
+    export_formats: ["csv", "json", "excel"]
+    
+  # Security
+  security:
+    enable_authentication: false
+    api_key_header: "X-API-Key"
+    cors_origins: ["*"]
+
+# Email and Notification
+notifications:
+  email:
+    enable: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: ""
+    sender_password: ""
+    
+  # Slack/Teams integration
+  webhook:
+    enable: false
+    url: ""
+    
+  # Notify on events
+  events:
+    - "training_complete"
+    - "model_deployed"
+    - "error_occurred"
+
+# Backup Configuration
+backup:
+  enable: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  backup_path: "backups"
+  keep_last_n: 7
+  include:
+    - "models"
+    - "config"
+    - "data/processed"
+  exclude:
+    - "temp"
+    - ".cache"
+    - "logs"
+
+# Environment-specific overrides
+# These will override the above settings based on environment
+environments:
+  development:
+    logging:
+      console:
+        log_level: "DEBUG"
+    deployment:
+      api:
+        reload: true
+        
+  staging:
+    logging:
+      console:
+        log_level: "INFO"
+    deployment:
+      api:
+        reload: false
+        
+  production:
+    logging:
+      console:
+        log_level: "WARNING"
+    deployment:
+      api:
+        reload: false
+      model_serving:
+        max_batch_size: 64
+    performance:
+      inference:
+        use_onnx: true
+        quantize: true
+    security:
+      enable_authentication: true
+      cors_origins: ["https://yourdomain.com"]
